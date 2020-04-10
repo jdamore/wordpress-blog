@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    image: wordpress:5.3.2-php7.3-apache
+    container_name: wordpress
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wp_db_user
+      WORDPRESS_DB_PASSWORD: wp_db_password
+      WORDPRESS_DB_NAME: wp_db
+    volumes:
+      - ./wordpress:/var/www/html
+
+  mysql:
+    image: mariadb:10.3.22
+    restart: always
+    container_name: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wp_db
+      MYSQL_USER: wp_db_user
+      MYSQL_PASSWORD: wp_db_password
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - 8989:80
+    environment:
+      PMA_HOST: mysql
